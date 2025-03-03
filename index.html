@@ -51,14 +51,128 @@
       </div>
     </main>
 
-
     <div class="modal-overlay hide">
       <div class="modal-wrapper">
-        <div class="close-btn-wrapper">
-          <button class="close-modal-btn">Close</button>
+        <div class="heading">
+          <h2>Add New Task</h2>
+          <div class="close-btn-wrapper">
+            <button class="close-modal-btn">
+              <img src="resources/close_ring_duotone-1.svg" alt="close-btn" />
+            </button>
+          </div>
         </div>
-        <h1>GeeksforGeeks</h1>
-        <div class="modal-content">Greetings from GeeksforGeeks</div>
+        <div class="details">
+          <form action="submit">
+            <label for="task-name">Task Name</label>
+            <input type="text" id="task-name" placeholder="Enter a task name" />
+            <label for="desc">Description</label>
+            <textarea
+              type="text"
+              id="desc"
+              placeholder="Enter a short description"
+              rows="4"
+            ></textarea>
+            <legend>Icons</legend>
+            <div class="emoji-options">
+              <!-- Option 1 -->
+              <label class="emoji-option">
+                <input type="radio" name="emoji" value="🖥️" checked />
+                <div class="emoji-box">🖥️</div>
+              </label>
+
+              <!-- Option 2 -->
+              <label class="emoji-option">
+                <input type="radio" name="emoji" value="💬" />
+                <div class="emoji-box">💬</div>
+              </label>
+
+              <!-- Option 3 -->
+              <label class="emoji-option">
+                <input type="radio" name="emoji" value="☕" />
+                <div class="emoji-box">☕</div>
+              </label>
+
+              <!-- Option 4 -->
+              <label class="emoji-option">
+                <input type="radio" name="emoji" value="🏋️" />
+                <div class="emoji-box">🏋️</div>
+              </label>
+
+              <!-- Option 5 -->
+              <label class="emoji-option">
+                <input type="radio" name="emoji" value="📚" />
+                <div class="emoji-box">📚</div>
+              </label>
+
+              <!-- Option 6 -->
+              <label class="emoji-option">
+                <input type="radio" name="emoji" value="⏰" />
+                <div class="emoji-box">⏰</div>
+              </label>
+            </div>
+            <div class="status-container">
+              <label class="status-card completed">
+                <div class="status">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="completed"
+                    style="display: none"
+                  />
+                  <img
+                    src="resources/Done_round.svg"
+                    alt="Completed"
+                    class="status-icon"
+                  />
+                  Completed
+                </div>
+              </label>
+              <label class="status-card in-progress">
+                <div class="status">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="in-progress"
+                    style="display: none"
+                  />
+                  <img
+                    src="resources/Time_atack_duotone.svg"
+                    alt="In Progress"
+                    class="status-icon"
+                  />
+                  In Progress
+                </div>
+              </label>
+              <label class="status-card wont-do">
+                <div class="status">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="wont-do"
+                    style="display: none"
+                  />
+                  <img
+                    src="resources/close_ring_duotone.svg"
+                    alt="Won't do"
+                    class="status-icon"
+                  />
+                  Won't do
+                </div>
+              </label>
+            </div>
+            <div class="button-container">
+              <button type="submit" class="submit-button">
+                Add New Task
+                <img
+                  src="resources/Done_round_duotone.svg"
+                  alt="Checkmark Icon"
+                  width="20"
+                  height="20"
+                />
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
     <!-- 
