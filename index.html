@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="icon"
+      href="resources/favicon.ico"
+      type="image/x-icon"
+      sizes="96x96"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <title>My Task Board | devChallenges.io</title>
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="resources/Logo.svg" alt="logo" />
+        <div class="">
+          <h1 contenteditable="true">My Task Board</h1>
+          <p>Tasks to keep organised</p>
+        </div>
+        <img src="resources/Edit_duotone.svg" alt="" />
+      </header>
+
+      <section>
+        <div class="btn inprogress">
+          <p>⏲️</p>
+          <h2>Task in progress</h2>
+          <img src="resources/Time_atack_duotone.svg" alt="progress" />
+        </div>
+        <div class="btn done">
+          <p>🏃‍♂️</p>
+          <h2>Task Compeleted</h2>
+          <img src="resources/Done_round_duotone.svg" alt="" />
+        </div>
+        <div class="btn not">
+          <p>🏃‍♂️</p>
+          <h2>Task Compeleted</h2>
+          <img src="resources/close_ring_duotone.svg" alt="" />
+        </div>
+        <div class="btn todo">
+          <p>🏫</p>
+          <h2>Task to do</h2>
+        </div>
+      </section>
+      <div class="btn add open-modal-btn open-modal-btn-wrapper">
+        <img src="resources/Add_round_duotone.svg" alt="" />
+        <h2>Add new task</h2>
+      </div>
+    </main>
+
+
+    <div class="modal-overlay hide">
+      <div class="modal-wrapper">
+        <div class="close-btn-wrapper">
+          <button class="close-modal-btn">Close</button>
+        </div>
+        <h1>GeeksforGeeks</h1>
+        <div class="modal-content">Greetings from GeeksforGeeks</div>
+      </div>
+    </div>
+    <!-- 
+
+      My Task Board
+      Tasks to keep organised
+      Enter a short description
+      In Progress
+      Completed
+      Won’t do
+      Task in Progress
+      Task Completed
+      Task Won’t Do
+      Task To Do
+      Add new task
+  
+  -->
+
+    <script src="index.js"></script>
+
+    <div class="author-info">
+      Coded by <a href="#">Firomsa Guteta</a> | Challenge by
+      <a href="https://www.devchallenges.io?ref=challenge" target="_blank"
+        >devChallenges.io</a
+      >.
+    </div>
+  </body>
+</html>
