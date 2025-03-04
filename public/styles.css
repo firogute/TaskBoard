@@ -125,7 +125,7 @@ section img {
   border-radius: 0.75rem;
   overflow: hidden;
   pointer-events: auto;
-  margin: 1rem;
+  /* margin: 1rem; */
   transform: translateX(0);
 }
 .modal-wrapper {

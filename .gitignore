@@ -1,8 +1,40 @@
-*.env
+# Node.js dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
 
+# Environment variables
+.env
+
+# Design files
 *.fig
 *.xd
 
+# macOS specific files
 .DS_Store
+
+# Prettier ignore
 .prettierignore
 
+# Logs
+logs
+*.log
+pids
+*.pid
+*.seed
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Build output
+dist/
+build/
+
+# IDE specific files
+.idea/
+.vscode/
+
+# Miscellaneous
+*.tgz
