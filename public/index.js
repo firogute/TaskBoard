@@ -8,41 +8,39 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function fetchTasks() {
     const response = await fetch("http://localhost:7000/api/tasks");
     const tasks = await response.json();
-    console.log(tasks );
-    const todoContainer = document.querySelector(".todo");
-    const inProgressContainer = document.querySelector(".inprogress");
-    const doneContainer = document.querySelector(".done");
-    const wontDoContainer = document.querySelector(".not");
+    console.log(tasks);
+    const todoContainer = document.querySelector(".todo-container");
 
     // Function to create task elements
     function createTaskElement(task) {
-      const taskElement = document.createElement("div");
-      taskElement.classList.add("task");
-      taskElement.innerHTML = `
-        <p>${task.emoji}</p>
-        <h3>${task.name}</h3>
-        <p>${task.description}</p>
-      `;
-      return taskElement;
+      let src;
+      switch (task.status) {
+        case "completed":
+          src = `resources/Done_round.svg`;
+          break;
+        case "in-progress":
+          src = `resources/Time_atack_duotone.svg`;
+          break;
+        case "wont-do":
+          src = `resources/close_ring_duotone.svg`;
+          break;
+        default:
+          break;
+      }
+
+      const html = `
+      <div class="btn ${task.status}">
+          <p>${task.emoji}</p>
+          <h2>${task.name}</h2>
+          <img src=${src} alt="${task.status}" />
+        </div>`;
+      return html;
     }
 
     // Loop through tasks and append them to the correct container
     tasks.forEach((task) => {
       const taskElement = createTaskElement(task);
-      switch (task.status) {
-        case "completed":
-          doneContainer.appendChild(taskElement);
-          break;
-        case "in-progress":
-          inProgressContainer.appendChild(taskElement);
-          break;
-        case "wont-do":
-          wontDoContainer.appendChild(taskElement);
-          break;
-        default:
-          todoContainer.appendChild(taskElement);
-          break;
-      }
+      todoContainer.insertAdjacentHTML("beforeend", taskElement);
     });
   }
 
@@ -92,7 +90,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name: taskName, description, emoji, status }),
+      body: JSON.stringify({ taskName, description, emoji, status }),
     });
 
     if (response.ok) {

@@ -52,7 +52,9 @@ app.get("/api/tasks", async (req, res) => {
 // Create a new task
 app.post("/api/tasks", async (req, res) => {
   const { taskName, description, emoji, status } = req.body;
-  console.log(`Received task: ${taskName}, ${description}, ${emoji}, ${status}`);
+  console.log(
+    `Received task: ${taskName}, ${description}, ${emoji}, ${status}`
+  );
 
   try {
     const { rows } = await pool.query(
@@ -62,7 +64,9 @@ app.post("/api/tasks", async (req, res) => {
     res.status(201).json(rows[0]);
   } catch (err) {
     console.error("Failed to create task:", err);
-    res.status(500).json({ error: "Failed to create task", details: err.message });
+    res
+      .status(500)
+      .json({ error: "Failed to create task", details: err.message });
   }
 });
 

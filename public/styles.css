@@ -69,11 +69,11 @@ h1 {
   border-radius: 15px;
 }
 
-.done {
+.completed {
   background: var(--accent-light);
 }
 
-.done img {
+.completed img {
   background: var(--accent-dark);
 }
 
@@ -90,11 +90,11 @@ section img {
   background: var(--secondary-dark);
 }
 
-.not {
-  background: #f7d4d3;
+.wont-do {
+  background: #F7D4D3;
 }
 
-.not img {
+.wont-do img {
   background: #dd524c;
 }
 
