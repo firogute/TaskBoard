@@ -25,27 +25,32 @@
       </header>
 
       <section class="todo-container">
-        <div class="btn inprogress">
-          <p>⏲️</p>
+        <div class="task inprogress">
+          <p class="task-icon">⏲️</p>
           <h2>Task in progress</h2>
           <img src="resources/Time_atack_duotone.svg" alt="progress" />
         </div>
-        <div class="btn completed">
-          <p>🏃‍♂️</p>
-          <h2>Task Compeleted</h2>
+        <div class="task completed">
+          <p class="task-icon">🏃‍♂️</p>
+          <h2>Task Completed</h2>
           <img src="resources/Done_round_duotone.svg" alt="" />
         </div>
-        <div class="btn wont-do">
-          <p>🏃‍♂️</p>
-          <h2>Task Compeleted</h2>
+        <div class="task wont-do">
+          <p class="task-icon">🏃‍♂️</p>
+          <h2>Task Won`t Do</h2>
           <img src="resources/close_ring_duotone.svg" alt="" />
         </div>
-        <div class="btn todo">
-          <p>🏫</p>
-          <h2>Task to do</h2>
+        <div class="task todo">
+          <p class="task-icon">🏫</p>
+          <div class="">
+            <h2>Task to do</h2>
+            <p class="task-desc">
+              Going out to work on some project and studying.
+            </p>
+          </div>
         </div>
       </section>
-      <div class="btn add open-modal-btn open-modal-btn-wrapper">
+      <div class="task add open-modal-btn open-modal-btn-wrapper">
         <img src="resources/Add_round_duotone.svg" alt="" />
         <h2>Add new task</h2>
       </div>
@@ -111,14 +116,10 @@
               </label>
             </div>
             <div class="status-container">
+              <!-- Completed -->
               <label class="status-card completed">
+                <input type="radio" name="status" value="completed" />
                 <div class="status">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="completed"
-                    style="display: none"
-                  />
                   <img
                     src="resources/Done_round.svg"
                     alt="Completed"
@@ -127,14 +128,11 @@
                   Completed
                 </div>
               </label>
+
+              <!-- In Progress -->
               <label class="status-card in-progress">
+                <input type="radio" name="status" value="in-progress" />
                 <div class="status">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="in-progress"
-                    style="display: none"
-                  />
                   <img
                     src="resources/Time_atack_duotone.svg"
                     alt="In Progress"
@@ -143,14 +141,11 @@
                   In Progress
                 </div>
               </label>
+
+              <!-- Won't Do -->
               <label class="status-card wont-do">
+                <input type="radio" name="status" value="wont-do" />
                 <div class="status">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="wont-do"
-                    style="display: none"
-                  />
                   <img
                     src="resources/close_ring_duotone.svg"
                     alt="Won't do"
@@ -191,13 +186,12 @@
   
   -->
 
-    <script src="index.js"></script>
-
     <div class="author-info">
       Coded by <a href="#">Firomsa Guteta</a> | Challenge by
       <a href="https://www.devchallenges.io?ref=challenge" target="_blank"
         >devChallenges.io</a
       >.
     </div>
+    <script src="index.js"></script>
   </body>
 </html>

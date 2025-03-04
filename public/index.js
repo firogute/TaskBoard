@@ -3,15 +3,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modal = document.querySelector(".modal-overlay");
   const modalWrapper = document.querySelector(".modal-wrapper");
   const closeBtn = document.querySelector(".close-modal-btn");
+  const statusContainer = document.querySelector(".status-container");
+  const statusCards = document.querySelectorAll(".status-card");
+  const form = document.querySelector("form");
 
-  // Fetch tasks and display them on page load
   async function fetchTasks() {
     const response = await fetch("http://localhost:7000/api/tasks");
     const tasks = await response.json();
     console.log(tasks);
     const todoContainer = document.querySelector(".todo-container");
 
-    // Function to create task elements
     function createTaskElement(task) {
       let src;
       switch (task.status) {
@@ -29,34 +30,48 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       const html = `
-      <div class="btn ${task.status}">
-          <p>${task.emoji}</p>
+      <div class="task ${task.status}">
+          <p class="task-icon">${task.emoji}</p>
           <h2>${task.name}</h2>
           <img src=${src} alt="${task.status}" />
         </div>`;
       return html;
     }
 
-    // Loop through tasks and append them to the correct container
     tasks.forEach((task) => {
       const taskElement = createTaskElement(task);
       todoContainer.insertAdjacentHTML("beforeend", taskElement);
     });
   }
 
-  // Call fetchTasks to load tasks when the page is loaded
   fetchTasks();
 
-  // Open modal function
+  function clearForm() {
+    document.getElementById("task-name").value = "";
+    document.getElementById("desc").value = "";
+
+    document
+      .querySelectorAll('input[name="emoji"]:checked')
+      .forEach((el) => (el.checked = false));
+    document
+      .querySelectorAll('input[name="status"]:checked')
+      .forEach((el) => (el.checked = false));
+
+    document.querySelectorAll(".status-card").forEach((card) => {
+      card.classList.remove("blue");
+      card.querySelector(".status-checked")?.remove();
+    });
+  }
+
   function openModal() {
     modal.classList.remove("hide");
   }
 
-  // Close modal function
   function closeModal(e, clickedOutside) {
     if (clickedOutside) {
       if (e.target.classList.contains("modal-overlay")) {
         modalWrapper.classList.add("closing");
+        clearForm();
         setTimeout(() => {
           modal.classList.add("hide");
           modalWrapper.classList.remove("closing");
@@ -64,6 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     } else {
       modalWrapper.classList.add("closing");
+      clearForm();
       setTimeout(() => {
         modal.classList.add("hide");
         modalWrapper.classList.remove("closing");
@@ -75,16 +91,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   modal.addEventListener("click", (e) => closeModal(e, true));
   closeBtn.addEventListener("click", closeModal);
 
-  // Handle task submission
-  document.querySelector("form").addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const taskName = document.getElementById("task-name").value;
     const description = document.getElementById("desc").value;
-    const emoji = document.querySelector('input[name="emoji"]:checked').value;
-    const status = document.querySelector('input[name="status"]:checked').value;
+    const emoji = document.querySelector('input[name="emoji"]:checked')?.value;
+    const status = document.querySelector(
+      'input[name="status"]:checked'
+    )?.value;
 
-    // Send POST request to add the task
+    if (!taskName || !description || !emoji || !status) {
+      alert("❌ Please fill out all fields.");
+      return;
+    }
+
     const response = await fetch("http://localhost:7000/api/tasks", {
       method: "POST",
       headers: {
@@ -95,10 +116,35 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (response.ok) {
       alert("✅ Task added successfully!");
-      fetchTasks(); // Fetch tasks again to update the board
-      closeModal(e, false); // Close the modal
+      fetchTasks();
+      closeModal(e, false);
     } else {
       alert("❌ Error adding task.");
+    }
+  });
+
+  statusContainer.addEventListener("click", (e) => {
+    const parent = e.target.parentElement;
+
+    if (!parent) return;
+
+    const statusCardsArray = [...statusCards];
+
+    statusCardsArray.forEach((task) => {
+      task.classList.remove("blue");
+      task.querySelector(".status-checked")?.remove();
+    });
+
+    if (statusCardsArray.includes(parent)) {
+      parent.classList.add("blue");
+
+      if (!parent.querySelector(".status-checked")) {
+        const img = document.createElement("img");
+        img.src = "resources/Done_round.svg";
+        img.alt = "checked";
+        img.classList.add("status-checked");
+        parent.appendChild(img);
+      }
     }
   });
 });

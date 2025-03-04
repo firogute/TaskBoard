@@ -30,7 +30,6 @@ pool
     console.error("Failed to connect to the database", err);
   });
 
-// Serve static files
 app.use(express.static(path.join(__dirname, "../public")));
 
 // Parse JSON request bodies
@@ -48,7 +47,6 @@ app.get("/api/tasks", async (req, res) => {
   }
 });
 
-// Create a new task
 // Create a new task
 app.post("/api/tasks", async (req, res) => {
   const { taskName, description, emoji, status } = req.body;
