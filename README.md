@@ -119,4 +119,4 @@ This project is open source and available under the MIT License.
 - [LinkedIn](https://www.linkedin.com/in/firo-guteta/)
 - [X(Twitter)](https://x.com/FiroGute492)
 
-Coded by [Firomsa Guteta](https://github.com/firogute) | Challenge by devChallenges.io
+Coded by [Firomsa Guteta](https://github.com/firogute) | Challenge by [devChallenges.io](https://devchallenges.io/editor/solution/45949)
