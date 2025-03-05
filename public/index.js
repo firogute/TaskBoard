@@ -7,40 +7,43 @@ document.addEventListener("DOMContentLoaded", async () => {
   const statusCards = document.querySelectorAll(".status-card");
   const form = document.querySelector("form");
   const todoContainer = document.querySelector(".todo-container");
+  const editTaskBtn = document.querySelector(".edit-button");
 
   let isEditing = false;
+  const API_BASE_URL = "http://localhost:7000/api/";
 
   async function fetchTasks() {
-    const response = await fetch("http://localhost:7000/api/tasks");
-    const tasks = await response.json();
-    console.log(tasks);
+    try {
+      const response = await fetch(`${API_BASE_URL}tasks`);
+      const tasks = await response.json();
+      console.log(tasks);
 
-    function createTaskElement(task) {
-      let src;
-      switch (task.status) {
-        case "completed":
-          src = `resources/Done_round.svg`;
-          break;
-        case "in-progress":
-          src = `resources/Time_atack_duotone.svg`;
-          break;
-        case "wont-do":
-          src = `resources/close_ring_duotone.svg`;
-          break;
-        default:
-          break;
-      }
+      function createTaskElement(task) {
+        let src;
+        switch (task.status) {
+          case "completed":
+            src = `resources/Done_round.svg`;
+            break;
+          case "in-progress":
+            src = `resources/Time_atack_duotone.svg`;
+            break;
+          case "wont-do":
+            src = `resources/close_ring_duotone.svg`;
+            break;
+          default:
+            break;
+        }
 
-      let html;
+        let html;
 
-      if (task.status) {
-        html = `<div class="task ${task.status}" data-id="${task.id}">
+        if (task.status) {
+          html = `<div class="task ${task.status}" data-id="${task.id}">
           <p class="task-icon">${task.emoji}</p>
           <h2>${task.name}</h2>
           <img src=${src} alt="${task.status}" />
         </div>`;
-      } else {
-        html = `<div class="task todo" data-id="${task.id}">
+        } else {
+          html = `<div class="task todo" data-id="${task.id}">
           <p class="task-icon">${task.emoji}</p>
           <div class="">
             <h2>${task.name}</h2>
@@ -49,14 +52,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             </p>
           </div>
         </div>`;
+        }
+        return html;
       }
-      return html;
-    }
 
-    tasks.forEach((task) => {
-      const taskElement = createTaskElement(task);
-      todoContainer.insertAdjacentHTML("beforeend", taskElement);
-    });
+      tasks.forEach((task) => {
+        const taskElement = createTaskElement(task);
+        todoContainer.insertAdjacentHTML("beforeend", taskElement);
+      });
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+      alert("❌ Failed to fetch tasks. Please try again.");
+    }
   }
 
   fetchTasks();
@@ -116,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   modal.addEventListener("click", (e) => closeModal(e, true));
   closeBtn.addEventListener("click", closeModal);
 
-  form.addEventListener("submit", async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
     const taskName = document.getElementById("task-name").value;
@@ -131,7 +138,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    const response = await fetch("http://localhost:7000/api/tasks", {
+    const response = await fetch(`${API_BASE_URL}tasks`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -146,7 +153,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else {
       alert("❌ Error adding task.");
     }
-  });
+  };
+
+  form.addEventListener("submit", handleFormSubmit);
 
   statusContainer.addEventListener("click", (e) => {
     const parent = e.target.parentElement;
@@ -187,16 +196,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   const openEditModal = async (id) => {
     isEditing = true;
     try {
-      const response = await fetch(`http://localhost:7000/api/tasks/${id}`);
+      const response = await fetch(`${API_BASE_URL}tasks/${id}`);
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status} - Task not found`);
       }
 
       const todo = await response.json();
-      console.log(todo);
+      // console.log(todo);
 
-      modalWrapper.querySelector("h2").innerHTML = "Task Detail";
+      modalWrapper.dataset.taskId = id;
+
+      modalWrapper.querySelector("h2").textContent = "Task Detail";
       document.getElementById("task-name").value = todo.name || "";
       document.getElementById("desc").value = todo.description || "";
 
@@ -230,4 +241,63 @@ document.addEventListener("DOMContentLoaded", async () => {
       alert("❌ Failed to fetch task details. Please try again.");
     }
   };
+
+  editTaskBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const taskId = modalWrapper.dataset.taskId;
+    // console.log(taskId);
+    const taskName = document.getElementById("task-name").value;
+    const description = document.getElementById("desc").value;
+    const emoji = document.querySelector('input[name="emoji"]:checked')?.value;
+    const status = document.querySelector(
+      'input[name="status"]:checked'
+    )?.value;
+
+    if (!taskName || !description || !emoji || !status) {
+      alert("❌ Please fill out all fields.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}tasks/${taskId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskName, description, emoji, status }),
+      });
+
+      if (response.ok) {
+        alert("✅ Task updated successfully!");
+        const taskElement = document.querySelector(
+          `.task[data-id="${taskId}"]`
+        );
+        if (taskElement) {
+          taskElement.className = `task ${status}`;
+          taskElement.querySelector("h2").textContent = taskName;
+          taskElement.querySelector(".task-icon").textContent = emoji;
+
+          const statusImg = taskElement.querySelector("img");
+          if (statusImg) {
+            switch (status) {
+              case "completed":
+                statusImg.src = "resources/Done_round.svg";
+                break;
+              case "in-progress":
+                statusImg.src = "resources/Time_atack_duotone.svg";
+                break;
+              case "wont-do":
+                statusImg.src = "resources/close_ring_duotone.svg";
+                break;
+            }
+          }
+        }
+
+        closeModal(e, false);
+      } else {
+        alert("❌ Error updating task.");
+      }
+    } catch (error) {
+      console.error("Error updating task:", error);
+      alert("❌ Something went wrong. Please try again.");
+    }
+  });
 });

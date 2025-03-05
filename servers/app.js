@@ -77,6 +77,22 @@ app.get("/api/tasks/:id", async (req, res) => {
   res.json(todo);
 });
 
+app.put("/api/tasks/:id", async (req, res) => {
+  const taskID = req.params.id;
+  const { taskName, description, emoji, status } = req.body;
+  try {
+    const response = await pool.query(
+      "UPDATE tasks SET name = $1, description = $2, emoji = $3, status = $4 WHERE id = $5 RETURNING *",
+      [taskName, description, emoji, status, taskID]
+    );
+
+    res.json({ message: "Task updated successfully", task: response.rows[0] });
+  } catch (error) {
+    console.error("Error updating task:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 const PORT = 7000;
 
 app.listen(PORT, () => {

@@ -58,6 +58,8 @@
 
     <div class="modal-overlay hide">
       <div class="modal-wrapper">
+        <input type="hidden" id="task-id" />
+
         <div class="heading">
           <h2 id="modal-title">Add New Task</h2>
           <div class="close-btn-wrapper">
@@ -67,7 +69,7 @@
           </div>
         </div>
         <div class="details">
-          <form action="POST">
+          <form>
             <label for="task-name">Task Name</label>
             <input type="text" id="task-name" placeholder="Enter a task name" />
             <label for="desc">Description</label>
@@ -156,7 +158,7 @@
               </label>
             </div>
             <div class="button-container">
-              <button type="submit" class="button delete-button">
+              <button type="button" class="button delete-button">
                 Delete
                 <img
                   src="resources/Trash.svg"
