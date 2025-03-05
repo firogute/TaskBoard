@@ -93,6 +93,26 @@ app.put("/api/tasks/:id", async (req, res) => {
   }
 });
 
+app.delete("/api/tasks/:id", async (req, res) => {
+  const taskID = req.params.id;
+
+  try {
+    const response = await pool.query(
+      "DELETE FROM tasks where id = $1 RETURNING *",
+      [taskID]
+    );
+    if (response.rows.length === 0) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    res.json({ message: "Task deleted successfully", task: response.rows[0] });
+  } catch (error) {
+    console.error("Error deleting task", error);
+    res
+      .status(500)
+      .json({ error: "Something went wrong while deleting the task" });
+  }
+});
 const PORT = 7000;
 
 app.listen(PORT, () => {

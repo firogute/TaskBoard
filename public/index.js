@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const form = document.querySelector("form");
   const todoContainer = document.querySelector(".todo-container");
   const editTaskBtn = document.querySelector(".edit-button");
+  const deleteTaskBtn = document.querySelector(".delete-button");
 
   let isEditing = false;
   const API_BASE_URL = "http://localhost:7000/api/";
@@ -16,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const response = await fetch(`${API_BASE_URL}tasks`);
       const tasks = await response.json();
-      console.log(tasks);
+      // console.log(tasks);
 
       function createTaskElement(task) {
         let src;
@@ -97,26 +98,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.querySelector(".delete-button").classList.add("hide");
     }
   }
+  function hideModal() {
+    modalWrapper.classList.add("closing");
+    clearForm();
+    setTimeout(() => {
+      modal.classList.add("hide");
+      modalWrapper.classList.remove("closing");
+    }, 300);
+  }
 
   function closeModal(e, clickedOutside) {
-    if (clickedOutside) {
-      if (e.target.classList.contains("modal-overlay")) {
-        modalWrapper.classList.add("closing");
-        clearForm();
-        setTimeout(() => {
-          modal.classList.add("hide");
-          modalWrapper.classList.remove("closing");
-        }, 300);
-      }
-    } else {
-      modalWrapper.classList.add("closing");
-      clearForm();
-      setTimeout(() => {
-        modal.classList.add("hide");
-        modalWrapper.classList.remove("closing");
-      }, 300);
+    if (!clickedOutside || e.target.classList.contains("modal-overlay")) {
+      hideModal();
     }
-    isEditing = false;
   }
 
   openBtn.addEventListener("click", openModal);
@@ -297,6 +291,33 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     } catch (error) {
       console.error("Error updating task:", error);
+      alert("❌ Something went wrong. Please try again.");
+    }
+  });
+
+  deleteTaskBtn.addEventListener("click", async (e) => {
+    const taskId = modalWrapper.dataset.taskId;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}tasks/${taskId}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        alert("✅ Task deleted successfully!");
+
+        const taskElement = document.querySelector(
+          `.task[data-id="${taskId}"]`
+        );
+        if (taskElement) {
+          taskElement.remove();
+        }
+
+        closeModal(e, false);
+      } else {
+        alert("❌ Error deleting task.");
+      }
+    } catch (error) {
+      console.error("Error deleting task:", error);
       alert("❌ Something went wrong. Please try again.");
     }
   });
