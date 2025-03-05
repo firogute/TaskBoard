@@ -1,96 +1,122 @@
-# DevChallenges.io - My Task Board
+# My Task Board
 
-![Thumbnail for the My Task Board coding challenge](./thumbnail.jpg)
+Welcome to **My Task Board** project. This is a task management tool that helps users stay organized and manage tasks efficiently. The app allows you to create, update, and delete tasks, and categorize them based on their status.
 
-## Welcome! 👋
+## Features
 
-Welcome to this responsive web coding challenge.
+- Add new tasks
+- Edit existing tasks
+- Delete tasks
+- Categorize tasks into:
+  - **In Progress**
+  - **Completed**
+  - **Won't Do**
+- Emoji options for easy task identification
 
-[devChallenges.io](https://devchallenges.io/) challenges are designed to help you enhance your coding skills by building realistic projects.
+## Technologies Used
 
-## The challenge
+- **HTML/CSS/JavaScript** for the front-end
+- **Node.js** for the back-end
+- **Express** - Node.js framework used to handle HTTP requests.
+- **PostgreSQL** for the database
+- **Fetch API** for handling HTTP requests
 
-Your task is to create a web page that closely resembles the provided design.
+## How to Run the Project
 
-You can use any tools or resources you like to complete this challenge. Each challenge is designed to practice different skills, so be sure to check the challenge description for more information.
+### Prerequisites
 
-If you need help or have any questions, feel free to [join our community](https://github.com/orgs/devchallenges-io/discussions) and ask for support.
+Make sure you have **Node.js** and **PostgreSQL** installed on your machine.
 
-## Where to find everything
+### 1. Clone the Repository
 
-Your goal is to build the project using the provided design. You can find the designs in the challenge editor once you start the challenge or in the `/design` folder. Please note that the `/design` folder may not include all the designs you need, so be sure to check the editor for more details.
+Clone the project to your local machine:
 
-The designs are in JPG format, so you'll need to use your best judgment for styles such as `font-size`, `padding`, and `margin`. Additionally, spacing guides are available for each challenge, but access to them requires a [Pro membership](https://devchallenges.io/pro). With a Pro membership, you can also download the Figma design files.
+```bash
+git clone https://github.com/your-username/my-task-board.git
+```
 
-All the required assets can be found in the `/resources` folder. You may need to optimize the assets as necessary.
+### 2. Install Dependencies
 
-For more information about the challenge, access the challenge editor on [devChallenges.io](https://devchallenges.io/challenges-dashboard).
+Navigate into your project folder and install the required dependencies:
 
-## Steps to Complete the Challenge on devChallenges.io
+```bash
+cd my-task-board
+npm install
+```
 
-- [ ] Start by visiting [devChallenges.io](https://devchallenges.io/), navigate to the challenge page, and begin the challenge.
-- [ ] Once you have started the challenge, you will have access to the editor where you can download the necessary resources, check colors, fonts, and more.
-- [ ] Download the starter/resources, and if you are a Pro user, you can also download the Figma file.
-- [ ] Initialize the project as a Git repository.
-- [ ] Review the design and analyze the different versions for desktop, tablet, and mobile.
-- [ ] Plan your approach to the project by identifying reusable CSS classes and structuring your HTML content.
-- [ ] Define the base styles for your project, including font-family, font-size, and other general content styles.
-- [ ] Begin adding styles from the top of the page and work your way down, ensuring that each section is visually appealing and matches the provided design.
-- [ ] Optimize and resize the required assets from the `/images` folder as necessary.
-- [ ] Test your project's responsiveness by previewing it on different devices and screen sizes.
-- [ ] Once you are satisfied with your implementation, deploy your project to a hosting platform such as GitHub Pages, Vercel, or Netlify.
-- [ ] Submit your solution on devchallenges.io and aim to pass the design comparison and performance tests.
-- [ ] Replace the default `README.md` file with a custom one that explains your project and reflects on your learning experience. You can use the provided `README-template.md` as a starting point.
-- [ ] Share your solution with the devChallenges.io community by tweeting [@devchallengesio](https://twitter.com/devchallengesio) and mentioning the repository and live URLs in your tweet. You can also share your solution on other social channels or write a blog post about your experience.
-- [ ] Seek feedback from the community by using the provided templates or asking specific questions about your implementation.
+### 3. Set Up the Database
 
-Good luck and enjoy building your project! 🚀
+Make sure your PostgreSQL database is set up. You need to create a tasks table where your tasks will be stored.
 
-## Deploying your project
+```bash
+CREATE TABLE tasks (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT,
+  emoji TEXT,
+  status TEXT
+);
+```
 
-Our recommended hosting options include:
+### 3. Install `nodemon` Globally (If Not Installed)
 
-- [GitHub Pages](https://pages.github.com/)
-- [Vercel](https://vercel.com/)
-- [Netlify](https://www.netlify.com/)
+To run the server with automatic restarts, install nodemon globally. You can do this with the following command:
 
-You can choose any of these solutions or explore other trusted providers. For more information, please refer to our guide on [free hosting platforms](https://devchallenges.io/learn/1-fundamentals/free-hosting-for-web-projects).
+```bash
+npm install -g nodemon
+```
 
-## Create your own `README.md`
+Alternatively, you can install it as a development dependency if you prefer:
 
-To use the Readme template, follow these steps:
+```bash
+npm install --save-dev nodemon
 
-1. Open the `README-template.md` file in your text editor.
-2. Replace the placeholder content with your own project information.
-3. Customize the sections and headings to fit your project's needs.
-4. Add a detailed description of your project, including its purpose and features.
-5. Reflect on your learning experience and any challenges you encountered during development.
-6. Delete the original `README.md` file.
-7. Rename the `README-template.md` file to `README.md`.
-8. Save the changes and commit the updated `README.md` file to your repository.
+```
 
-By following these instructions, you can create a customized `README.md` file that effectively communicates your project to others.
+### 5. Start the Server
 
-## More guides
+The server is located inside the `server` folder. To run the back-end server, navigate to the `server` directory and use `nodemon` for automatic restarts:
 
-Don't forget to check out the [devChallenges Curriculum](https://devchallenges.io/learn), which covers basic to advanced topics that are essential for your web development journey.
+```bash
+cd server
+nodemon app.js
 
-## Sharing your solution
+```
 
-There are several platforms where you can share your solution:
+The server will run on `http://localhost:7000`.
 
-1.  Tweet [@devchallengesio](https://x.com/devchallengesio) and mention **@devchallengesio**, including the repository and live URLs in your tweet. We would love to see what you have built and help spread the word.
-2.  Share your solution on other social channels such as LinkedIn and tag [devchallenges](https://www.linkedin.com/company/devchallenges).
-3.  Write a blog post about your experience building the project. Documenting your workflow, technical choices, and explaining your code is an excellent way to reinforce your learning. Popular platforms for writing include [dev.to](https://dev.to/), [Hashnode](https://hashnode.com/), and [CodeNewbie](https://community.codenewbie.org/).
+### Additional Notes
 
-We provide templates to help you share your solution once you have submitted it on the platform. Feel free to edit them and include specific questions when seeking feedback.
+- The backend is set to run on port `7000` by default. If you want to change it, just update the `PORT` variable in `server/app.js`.
+- If you encounter any issues during development or need to reset the database, feel free to ask for assistance!
 
-The more specific your questions are, the more likely it is that another community member will provide feedback.
+### Contributing
 
-## Feedback
+We welcome contributions! If you'd like to improve the project, follow these steps:
 
-We value feedback and are always looking to improve our challenges and platform. If you have any suggestions or comments, please email us at hi\[at]devchallenges\[dot]io.
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature-name`)
+3. Make your changes
+4. Commit your changes (`git commit -am 'Add new feature'`)
+5. Push to the branch (`git push origin feature-name`)
+6. Create a pull request
 
-This challenge is completely free. Please share it with anyone who would find it useful for practice.
+## License
 
-**Enjoy building!** 🚀
+This project is open source and available under the MIT License.
+
+## Screenshot
+
+<picture>
+  <!-- For screens wider than 768px (typically desktop) -->
+  <source media="(min-width: 768px)" srcset="design/Desktop_1350px.jpg">
+
+  <!-- For smaller screens (typically mobile) -->
+  <img src="design/Mobile_412px.jpg" alt="Screenshot">
+</picture>
+## 🤝 Connect with Me
+
+- [LinkedIn](https://www.linkedin.com/in/firo-guteta/)
+- [X(Twitter)](https://x.com/FiroGute492)
+
+Coded by [Firomsa Guteta](https://github.com/firogute) | Challenge by devChallenges.io
