@@ -98,7 +98,7 @@ section img {
   width: 50px;
 }
 
-main .inprogress {
+main .in-progress {
   background: var(--primary-dark);
 }
 
@@ -144,6 +144,9 @@ main .wont-do {
   transform: translateX(0);
 }
 .modal-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 95%;
   height: 95%;
   background: #f8fafc;
@@ -230,10 +233,6 @@ main .wont-do {
   color: transparent;
 }
 
-.hide {
-  display: none;
-}
-
 .heading {
   display: flex;
   justify-content: space-between;
@@ -249,21 +248,20 @@ main .wont-do {
 }
 
 .button-container {
-  margin-top: auto;
+  margin-top: auto; /* Ensures buttons are pushed to the bottom */
   width: 100%;
   display: flex;
+  gap: 0.5rem;
   justify-content: flex-end;
 }
-
-.submit-button {
+.button {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1.5rem;
+  gap: 0.3rem;
+  padding: 0.5rem 1.2rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
   color: white;
-  background-color: #3b82f6;
   border: none;
   border-radius: 9999px;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -271,11 +269,21 @@ main .wont-do {
   transition: background-color 0.2s ease-in-out;
 }
 
-.submit-button:hover {
+.delete-button {
+  background-color: rgba(128, 128, 128, 0.616);
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: rgb(128, 128, 128);
+}
+
+.edit-button,
+.add-button {
   background-color: #2563eb;
 }
 
-.submit-button:focus-visible {
+.button:focus-visible {
   outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
@@ -446,4 +454,8 @@ textarea:focus {
   gap: 1rem;
   position: relative;
   min-height: 100%;
+}
+
+.hide {
+  display: none;
 }

@@ -6,12 +6,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const statusContainer = document.querySelector(".status-container");
   const statusCards = document.querySelectorAll(".status-card");
   const form = document.querySelector("form");
+  const todoContainer = document.querySelector(".todo-container");
+
+  let isEditing = false;
 
   async function fetchTasks() {
     const response = await fetch("http://localhost:7000/api/tasks");
     const tasks = await response.json();
     console.log(tasks);
-    const todoContainer = document.querySelector(".todo-container");
 
     function createTaskElement(task) {
       let src;
@@ -29,12 +31,25 @@ document.addEventListener("DOMContentLoaded", async () => {
           break;
       }
 
-      const html = `
-      <div class="task ${task.status}">
+      let html;
+
+      if (task.status) {
+        html = `<div class="task ${task.status}" data-id="${task.id}">
           <p class="task-icon">${task.emoji}</p>
           <h2>${task.name}</h2>
           <img src=${src} alt="${task.status}" />
         </div>`;
+      } else {
+        html = `<div class="task todo" data-id="${task.id}">
+          <p class="task-icon">${task.emoji}</p>
+          <div class="">
+            <h2>${task.name}</h2>
+            <p class="task-desc">
+              ${task.description}
+            </p>
+          </div>
+        </div>`;
+      }
       return html;
     }
 
@@ -65,6 +80,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function openModal() {
     modal.classList.remove("hide");
+    if (isEditing) {
+      document.querySelector(".add-button").classList.add("hide");
+      document.querySelector(".edit-button").classList.remove("hide");
+      document.querySelector(".delete-button").classList.remove("hide");
+    } else {
+      document.querySelector(".add-button").classList.remove("hide");
+      document.querySelector(".edit-button").classList.add("hide");
+      document.querySelector(".delete-button").classList.add("hide");
+    }
   }
 
   function closeModal(e, clickedOutside) {
@@ -85,6 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         modalWrapper.classList.remove("closing");
       }, 300);
     }
+    isEditing = false;
   }
 
   openBtn.addEventListener("click", openModal);
@@ -101,7 +126,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       'input[name="status"]:checked'
     )?.value;
 
-    if (!taskName || !description || !emoji || !status) {
+    if (!taskName || !description || !emoji) {
       alert("❌ Please fill out all fields.");
       return;
     }
@@ -147,4 +172,62 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
   });
+
+  todoContainer.addEventListener("click", (e) => {
+    const taskDiv = e.target.closest(".task");
+
+    if (!taskDiv) return;
+    if (!taskDiv || taskDiv.classList.contains("static-task")) return;
+
+    const taskId = taskDiv.dataset.id;
+
+    openEditModal(taskId);
+  });
+
+  const openEditModal = async (id) => {
+    isEditing = true;
+    try {
+      const response = await fetch(`http://localhost:7000/api/tasks/${id}`);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - Task not found`);
+      }
+
+      const todo = await response.json();
+      console.log(todo);
+
+      modalWrapper.querySelector("h2").innerHTML = "Task Detail";
+      document.getElementById("task-name").value = todo.name || "";
+      document.getElementById("desc").value = todo.description || "";
+
+      const emojiInput = document.querySelector(
+        `input[name="emoji"][value="${todo.emoji}"]`
+      );
+      if (emojiInput) emojiInput.checked = true;
+
+      if (todo.status) {
+        const statusInput = document.querySelector(
+          `input[name="status"][value="${todo.status}"]`
+        );
+        if (statusInput) {
+          statusInput.checked = true;
+          const statusCard = statusInput.closest(".status-card");
+          if (statusCard) {
+            statusCard.classList.add("blue");
+            if (!statusCard.querySelector(".status-checked")) {
+              const img = document.createElement("img");
+              img.src = "resources/Done_round.svg";
+              img.alt = "checked";
+              img.classList.add("status-checked");
+              statusCard.appendChild(img);
+            }
+          }
+        }
+      }
+      openModal();
+    } catch (error) {
+      console.error("Error fetching task:", error);
+      alert("❌ Failed to fetch task details. Please try again.");
+    }
+  };
 });

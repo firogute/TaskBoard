@@ -68,6 +68,14 @@ app.post("/api/tasks", async (req, res) => {
   }
 });
 
+app.get("/api/tasks/:id", async (req, res) => {
+  const id = req.params.id;
+
+  const response = pool.query("SELECT * FROM tasks WHERE id = $1", [id]);
+  const todo = (await response).rows[0];
+
+  res.json(todo);
+});
 
 const PORT = 7000;
 

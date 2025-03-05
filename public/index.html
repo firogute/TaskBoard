@@ -25,7 +25,7 @@
       </header>
 
       <section class="todo-container">
-        <div class="task inprogress">
+        <div class="task in-progress">
           <p class="task-icon">⏲️</p>
           <h2>Task in progress</h2>
           <img src="resources/Time_atack_duotone.svg" alt="progress" />
@@ -40,7 +40,7 @@
           <h2>Task Won`t Do</h2>
           <img src="resources/close_ring_duotone.svg" alt="" />
         </div>
-        <div class="task todo">
+        <div class="task todo static-task">
           <p class="task-icon">🏫</p>
           <div class="">
             <h2>Task to do</h2>
@@ -59,7 +59,7 @@
     <div class="modal-overlay hide">
       <div class="modal-wrapper">
         <div class="heading">
-          <h2>Add New Task</h2>
+          <h2 id="modal-title">Add New Task</h2>
           <div class="close-btn-wrapper">
             <button class="close-modal-btn">
               <img src="resources/close_ring_duotone-1.svg" alt="close-btn" />
@@ -156,7 +156,25 @@
               </label>
             </div>
             <div class="button-container">
-              <button type="submit" class="submit-button">
+              <button type="submit" class="button delete-button">
+                Delete
+                <img
+                  src="resources/Trash.svg"
+                  alt="Checkmark Icon"
+                  width="20"
+                  height="20"
+                />
+              </button>
+              <button type="submit" class="button edit-button">
+                Save
+                <img
+                  src="resources/Done_round_duotone.svg"
+                  alt="Checkmark Icon"
+                  width="20"
+                  height="20"
+                />
+              </button>
+              <button type="submit" class="button add-button">
                 Add New Task
                 <img
                   src="resources/Done_round_duotone.svg"
