@@ -114,9 +114,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           .querySelector(".todo-container")
           .insertAdjacentHTML("beforeend", taskElement);
       });
+      showSuccessMessage("Tasks retrieved successfully!");
     } catch (error) {
-      console.error("Error fetching tasks:", error);
-      alert("❌ Failed to fetch tasks. Please try again.");
+      // console.error("Error fetching tasks:", error);
+      showErrorMessage("Failed to fetch tasks. Please refresh again.");
     }
   }
 
@@ -146,7 +147,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Validation
     if (!taskName || !description || !emoji) {
-      showErrorMessage("❌ Please fill out all fields.");
+      showErrorMessage("Please fill out all fields.");
       return;
     }
 
@@ -169,11 +170,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (emojiInput) emojiInput.checked = false;
       if (statusInput) statusInput.checked = false;
 
-      showSuccessMessage("✅ Task added successfully!");
+      showSuccessMessage("Task added successfully!");
       closeModal(e, false);
       fetchTasks();
     } catch (error) {
-      showErrorMessage("❌ Error adding task. Try again.");
+      showErrorMessage("Error adding task. Try again.");
       console.error(error);
     } finally {
       submitButton.disabled = false;
@@ -183,16 +184,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const showErrorMessage = (message) => {
     const errorDiv = document.getElementById("error-message");
-    errorDiv.textContent = message;
-    errorDiv.style.display = "block";
-    setTimeout(() => (errorDiv.style.display = "none"), 3000);
+    const errorText = errorDiv.querySelector(".error-text");
+    if (!errorText) {
+      const textSpan = document.createElement("span");
+      textSpan.classList.add("error-text");
+      errorDiv.appendChild(textSpan);
+    }
+    errorDiv.querySelector(".error-text").textContent = message;
+    errorDiv.classList.remove("hide");
+    setTimeout(() => errorDiv.classList.add("hide"), 3000);
   };
 
   const showSuccessMessage = (message) => {
     const successDiv = document.getElementById("success-message");
-    successDiv.textContent = message;
+    const successText = successDiv.querySelector(".success-text");
+    if (!successText) {
+      const textSpan = document.createElement("span");
+      textSpan.classList.add("success-text");
+      successDiv.appendChild(textSpan);
+    }
+    successDiv.querySelector(".success-text").textContent = message;
     successDiv.classList.remove("hide");
-    setTimeout(() => (successDiv.style.display = "none"), 3000);
+    setTimeout(() => successDiv.classList.add("hide"), 3000);
   };
 
   form.addEventListener("submit", handleFormSubmit);
@@ -279,8 +292,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       openModal();
     } catch (error) {
-      console.error("Error fetching task:", error);
-      alert("❌ Failed to fetch task details. Please try again.");
+      // console.error("Error fetching task:", error);
+      showErrorMessage("Failed to fetch task details. Please try again.");
     }
   };
 
@@ -296,7 +309,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     )?.value;
 
     if (!taskName || !description || !emoji || !status) {
-      alert("❌ Please fill out all fields.");
+      showErrorMessage("❌ Please fill out all fields.");
       return;
     }
 
@@ -308,7 +321,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       if (response.ok) {
-        alert("✅ Task updated successfully!");
+        showSuccessMessage("Task updated successfully!");
         const taskElement = document.querySelector(
           `.task[data-id="${taskId}"]`
         );
@@ -335,11 +348,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         closeModal(e, false);
       } else {
-        alert("❌ Error updating task.");
+        showErrorMessage("Error updating task.");
       }
     } catch (error) {
-      console.error("Error updating task:", error);
-      alert("❌ Something went wrong. Please try again.");
+      // console.error("Error updating task:", error);
+      showErrorMessage("Something went wrong. Please try again.");
     }
   });
 
@@ -351,7 +364,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         method: "DELETE",
       });
       if (response.ok) {
-        alert("✅ Task deleted successfully!");
+        showSuccessMessage("Task deleted successfully!");
 
         const taskElement = document.querySelector(
           `.task[data-id="${taskId}"]`
@@ -362,11 +375,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         closeModal(e, false);
       } else {
-        alert("❌ Error deleting task.");
+        showErrorMessage("Error deleting task.");
       }
     } catch (error) {
-      console.error("Error deleting task:", error);
-      alert("❌ Something went wrong. Please try again.");
+      // console.error("Error deleting task:", error);
+      showErrorMessage("Something went wrong. Please try again.");
     }
   });
 });

@@ -220,6 +220,41 @@ app.put("/api/tasks/:taskId", async (req, res) => {
   }
 });
 
+app.delete("/api/tasks/:taskId", async (req, res) => {
+  const { taskId } = req.params;
+
+  try {
+    const { data, error } = await supabase
+      .from("boards")
+      .select("data")
+      .eq("id", boardId)
+      .single();
+
+    if (error || !data) {
+      return res.status(404).json({ error: "Board not found" });
+    }
+
+    let tasks = data.data || [];
+    const updatedTasks = tasks.filter((t) => t.id !== parseInt(taskId));
+
+    if (tasks.length === updatedTasks.length) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    const { error: updateError } = await supabase
+      .from("boards")
+      .update({ data: updatedTasks })
+      .eq("id", boardId);
+
+    if (updateError) throw updateError;
+
+    res.status(200).json({ message: "Task deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting task:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 const PORT = 8080;
 
 app.listen(PORT, () => {

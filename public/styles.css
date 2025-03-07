@@ -457,13 +457,34 @@ textarea:focus {
   min-height: 100%;
 }
 
-.hide {
-  display: none;
+.message {
+  position: fixed;
+  bottom: 4rem;
+  left: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: white;
+  color: black;
+  border-radius: 0.5rem;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  z-index: 10;
 }
 
-.error-message,
-.success-message {
-  position: absolute;
-  bottom: 5%;
-  left: 5%;
+.message img {
+  padding: 0.25rem;
+  border-radius: 50%;
+}
+
+#error-message img {
+  background-color: red;
+}
+
+#success-message img {
+  background-color: var(--accent-dark);
+}
+
+.hide {
+  display: none;
 }
