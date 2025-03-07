@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let isEditing = false;
   let isRetrieved = false;
-  const API_BASE_URL = "http://localhost:8080/api/";
+  const API_BASE_URL = "https://taskboard-pl03.onrender.com/api/";
 
   function clearForm() {
     document.getElementById("task-name").value = "";
