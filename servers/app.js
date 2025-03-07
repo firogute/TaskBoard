@@ -19,31 +19,10 @@ const app = express();
 
 app.use(cors());
 
-// Serve only static assets, excluding index.html
 app.use(express.static(path.join(__dirname, "../public"), { index: false }));
 
-// PostgreSQL connection
-const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "task_board",
-  password: "admin",
-  port: 5555,
-});
-
-pool
-  .connect()
-  .then(() => {
-    console.log("Connected to PostgreSQL database successfully!");
-  })
-  .catch((err) => {
-    console.error("Failed to connect to the database", err);
-  });
-
-// Parse JSON request bodies
 app.use(express.json());
 
-// **Root route - create a new board and redirect**
 app.get("/", async (req, res) => {
   console.log("Creating a new board...");
 
@@ -58,11 +37,9 @@ app.get("/", async (req, res) => {
       throw error;
     }
 
-    // Get the new boardId and redirect to the new board's page
     const boardId = data[0].id;
     console.log(`New board created with ID: ${boardId}`);
 
-    // Redirect to the new board's page
     return res.redirect(`/${boardId}`);
   } catch (err) {
     console.error("Error creating a new board:", err);
@@ -70,7 +47,6 @@ app.get("/", async (req, res) => {
   }
 });
 
-// **Board Route - serve index.html when a board ID is provided**
 app.get("/:id", async (req, res) => {
   console.log(`Entered board route with ID: ${req.params.id}`);
 
@@ -88,7 +64,6 @@ app.get("/:id", async (req, res) => {
       return res.status(404).send("Board not found");
     }
 
-    // Serve the board's page
     console.log(`Board ID ${boardId} found, serving index.html`);
     res.sendFile(path.join(__dirname, "../public", "index.html"));
   } catch (err) {
@@ -100,7 +75,6 @@ app.get("/api/tasks/:boardId", async (req, res) => {
   const { boardId } = req.params;
 
   try {
-    // Fetch the tasks from the "data" column of the given board
     const { data, error } = await supabase
       .from("boards")
       .select("data")
@@ -119,7 +93,6 @@ app.get("/api/tasks/:boardId", async (req, res) => {
   }
 });
 
-// Add a new task to a board
 app.post("/api/board/:id/task", async (req, res) => {
   const boardId = req.params.id;
   const { taskName, description, emoji, status } = req.body;
@@ -163,6 +136,33 @@ app.post("/api/board/:id/task", async (req, res) => {
   } catch (err) {
     console.error("Error adding task:", err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/api/tasks/:userId/:taskId", async (req, res) => {
+  const { userId, taskId } = req.params;
+  const taskIdNum = parseInt(taskId);
+
+  try {
+    const { data, error } = await supabase
+      .from("boards")
+      .select("data")
+      .eq("id", userId)
+      .single();
+
+    if (error) throw error;
+    if (!data) return res.status(404).json({ error: "Board not found" });
+
+    const allTasks = data.data;
+
+    const onetask = allTasks.find((t) => t.id === taskIdNum);
+
+    if (!onetask) return res.status(404).json({ error: "Task not found" });
+
+    res.json(onetask);
+  } catch (error) {
+    console.error("Error fetching task:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const taskName = taskNameInput.value.trim();
     const description = descInput.value.trim();
     const emoji = emojiInput?.value;
-    const status = statusInput?.value || "todo"; // Default status if not selected
+    const status = statusInput?.value || "todo";
 
     // Validation
     if (!taskName || !description || !emoji) {
@@ -149,15 +149,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // Disable submit button to prevent multiple submissions
     submitButton.disabled = true;
     submitButton.textContent = "Adding...";
 
-    // Create task object
     const newTask = { taskName, description, emoji, status };
 
     try {
-      // Send task to API
       const response = await fetch(`${API_BASE_URL}board/${userId}/task`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -166,7 +163,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (!response.ok) throw new Error("Failed to add task.");
 
-      // Reset form after success
       taskNameInput.value = "";
       descInput.value = "";
       if (emojiInput) emojiInput.checked = false;
@@ -174,18 +170,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       showSuccessMessage("✅ Task added successfully!");
       closeModal(e, false);
-      fetchTasks(); // Refresh task list
+      fetchTasks();
     } catch (error) {
       showErrorMessage("❌ Error adding task. Try again.");
       console.error(error);
     } finally {
-      // Re-enable button
       submitButton.disabled = false;
       submitButton.textContent = "Add New Task";
     }
   };
 
-  // Helper functions for messages
   const showErrorMessage = (message) => {
     const errorDiv = document.getElementById("error-message");
     errorDiv.textContent = message;
@@ -229,63 +223,64 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   todoContainer.addEventListener("click", (e) => {
     const taskDiv = e.target.closest(".task");
+    const userId = getBoardIdFromURL();
 
     if (!taskDiv) return;
     if (!taskDiv || taskDiv.classList.contains("static-task")) return;
 
     const taskId = taskDiv.dataset.id;
 
-    openEditModal(taskId);
+    openEditModal(userId, taskId);
   });
 
-  const openEditModal = async (id) => {
+  const openEditModal = async (userId, taskId) => {
     isEditing = true;
     console.log(isEditing);
-    // try {
-    //   const response = await fetch(`${API_BASE_URL}tasks/${id}`);
+    try {
+      const response = await fetch(`${API_BASE_URL}tasks/${userId}/${taskId}`);
 
-    //   if (!response.ok) {
-    //     throw new Error(`Error: ${response.status} - Task not found`);
-    //   }
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - Task not found`);
+      }
 
-    //   const todo = await response.json();
-    //   // console.log(todo);
+      const todo = await response.json();
+      console.log(todo);
 
-    //   modalWrapper.dataset.taskId = id;
+      modalWrapper.dataset.taskId = taskId;
 
-    //   modalWrapper.querySelector("h2").textContent = "Task Detail";
-    //   document.getElementById("task-name").value = todo.name || "";
-    //   document.getElementById("desc").value = todo.description || "";
+      modalWrapper.querySelector("h2").textContent = "Task Detail";
+      document.getElementById("task-name").value = todo.taskName || "";
+      document.getElementById("desc").value = todo.description || "";
 
-    //   const emojiInput = document.querySelector(
-    //     `input[name="emoji"][value="${todo.emoji}"]`
-    //   );
-    //   if (emojiInput) emojiInput.checked = true;
+      const emojiInput = document.querySelector(
+        `input[name="emoji"][value="${todo.emoji}"]`
+      );
+      if (emojiInput) emojiInput.checked = true;
 
-    //   if (todo.status) {
-    //     const statusInput = document.querySelector(
-    //       `input[name="status"][value="${todo.status}"]`
-    //     );
-    //     if (statusInput) {
-    //       statusInput.checked = true;
-    //       const statusCard = statusInput.closest(".status-card");
-    //       if (statusCard) {
-    //         statusCard.classList.add("blue");
-    //         if (!statusCard.querySelector(".status-checked")) {
-    //           const img = document.createElement("img");
-    //           img.src = "resources/Done_round.svg";
-    //           img.alt = "checked";
-    //           img.classList.add("status-checked");
-    //           statusCard.appendChild(img);
-    //         }
-    //       }
-    //     }
-    //   }
-    //   openModal();
-    // } catch (error) {
-    //   console.error("Error fetching task:", error);
-    //   alert("❌ Failed to fetch task details. Please try again.");
-    // }
+      if (todo.status) {
+        const statusInput = document.querySelector(
+          `input[name="status"][value="${todo.status}"]`
+        );
+        if (statusInput) {
+          statusInput.checked = true;
+          const statusCard = statusInput.closest(".status-card");
+          if (statusCard) {
+            statusCard.classList.add("blue");
+            if (!statusCard.querySelector(".status-checked")) {
+              const img = document.createElement("img");
+              img.src = "resources/Done_round.svg";
+              img.alt = "checked";
+              img.classList.add("status-checked");
+              statusCard.appendChild(img);
+            }
+          }
+        }
+      }
+      openModal();
+    } catch (error) {
+      console.error("Error fetching task:", error);
+      alert("❌ Failed to fetch task details. Please try again.");
+    }
   };
 
   editTaskBtn.addEventListener("click", async (e) => {
