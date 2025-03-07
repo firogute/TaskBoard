@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const todoContainer = document.querySelector(".todo-container");
   const editTaskBtn = document.querySelector(".edit-button");
   const deleteTaskBtn = document.querySelector(".delete-button");
-  console.log("HIIIIIIIIIIIIIIIIIIII");
+  // console.log("HIIIIIIIIIIIIIIIIIIII");
 
   let isEditing = false;
   let isRetrieved = false;
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const boardId = window.location.pathname.split("/")[1]; // Extract board ID from URL
       const response = await fetch(`${API_BASE_URL}tasks/${boardId}`);
       const tasks = await response.json();
-      console.log(tasks);
+      // console.log(tasks);
 
       function createTaskElement(task) {
         let src;
