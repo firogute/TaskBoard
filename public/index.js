@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function closeModal(e, clickedOutside) {
     if (!clickedOutside || e.target.classList.contains("modal-overlay")) {
+      isEditing = false;
       hideModal();
     }
   }

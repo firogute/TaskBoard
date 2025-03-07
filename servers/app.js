@@ -23,6 +23,8 @@ app.use(express.static(path.join(__dirname, "../public"), { index: false }));
 
 app.use(express.json());
 
+let boardId;
+
 app.get("/", async (req, res) => {
   console.log("Creating a new board...");
 
@@ -37,7 +39,7 @@ app.get("/", async (req, res) => {
       throw error;
     }
 
-    const boardId = data[0].id;
+    boardId = data[0].id;
     console.log(`New board created with ID: ${boardId}`);
 
     return res.redirect(`/${boardId}`);
@@ -50,7 +52,7 @@ app.get("/", async (req, res) => {
 app.get("/:id", async (req, res) => {
   console.log(`Entered board route with ID: ${req.params.id}`);
 
-  let boardId = req.params.id;
+  boardId = req.params.id;
 
   try {
     const { data, error } = await supabase
@@ -140,6 +142,7 @@ app.post("/api/board/:id/task", async (req, res) => {
 });
 
 app.get("/api/tasks/:userId/:taskId", async (req, res) => {
+  console.log(boardId);
   const { userId, taskId } = req.params;
   const taskIdNum = parseInt(taskId);
 
@@ -163,6 +166,57 @@ app.get("/api/tasks/:userId/:taskId", async (req, res) => {
   } catch (error) {
     console.error("Error fetching task:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.put("/api/tasks/:taskId", async (req, res) => {
+  const { taskId } = req.params;
+  const { taskName, description, emoji, status } = req.body;
+
+  if (!taskName || !description || !emoji || !status) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("boards")
+      .select("data")
+      .eq("id", boardId)
+      .single();
+
+    if (error || !data) {
+      return res.status(404).json({ error: "Board not found" });
+    }
+
+    let tasks = data.data || [];
+    let taskIndex = tasks.findIndex((t) => t.id === parseInt(taskId));
+
+    if (taskIndex === -1) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    tasks[taskIndex] = {
+      ...tasks[taskIndex],
+      taskName,
+      description,
+      emoji,
+      status,
+    };
+
+    const { error: updateError } = await supabase
+      .from("boards")
+      .update({ data: tasks })
+      .eq("id", boardId)
+      .single();
+
+    if (updateError) throw updateError;
+
+    res
+      .status(200)
+      .json({ message: "Task updated successfully", task: tasks[taskIndex] });
+  } catch (err) {
+    console.error("Error updating task:", err);
+    res.status(500).json({ error: err.message });
   }
 });
 
