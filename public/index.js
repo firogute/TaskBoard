@@ -9,65 +9,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const todoContainer = document.querySelector(".todo-container");
   const editTaskBtn = document.querySelector(".edit-button");
   const deleteTaskBtn = document.querySelector(".delete-button");
+  console.log("HIIIIIIIIIIIIIIIIIIII");
 
   let isEditing = false;
-  const API_BASE_URL = "http://localhost:7000/api/";
-
-  async function fetchTasks() {
-    try {
-      const response = await fetch(`${API_BASE_URL}tasks`);
-      const tasks = await response.json();
-      // console.log(tasks);
-
-      function createTaskElement(task) {
-        let src;
-        switch (task.status) {
-          case "completed":
-            src = `resources/Done_round.svg`;
-            break;
-          case "in-progress":
-            src = `resources/Time_atack_duotone.svg`;
-            break;
-          case "wont-do":
-            src = `resources/close_ring_duotone.svg`;
-            break;
-          default:
-            break;
-        }
-
-        let html;
-
-        if (task.status) {
-          html = `<div class="task ${task.status}" data-id="${task.id}">
-          <p class="task-icon">${task.emoji}</p>
-          <h2>${task.name}</h2>
-          <img src=${src} alt="${task.status}" />
-        </div>`;
-        } else {
-          html = `<div class="task todo" data-id="${task.id}">
-          <p class="task-icon">${task.emoji}</p>
-          <div class="">
-            <h2>${task.name}</h2>
-            <p class="task-desc">
-              ${task.description}
-            </p>
-          </div>
-        </div>`;
-        }
-        return html;
-      }
-
-      tasks.forEach((task) => {
-        const taskElement = createTaskElement(task);
-        todoContainer.insertAdjacentHTML("beforeend", taskElement);
-      });
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
-      alert("❌ Failed to fetch tasks. Please try again.");
-    }
-  }
-
-  fetchTasks();
+  const API_BASE_URL = "http://localhost:8080/api/";
 
   function clearForm() {
     document.getElementById("task-name").value = "";
@@ -87,6 +32,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function openModal() {
+    console.log("Opening");
     modal.classList.remove("hide");
     if (isEditing) {
       document.querySelector(".add-button").classList.add("hide");
@@ -117,36 +63,135 @@ document.addEventListener("DOMContentLoaded", async () => {
   modal.addEventListener("click", (e) => closeModal(e, true));
   closeBtn.addEventListener("click", closeModal);
 
+  async function fetchTasks() {
+    try {
+      const boardId = window.location.pathname.split("/")[1]; // Extract board ID from URL
+      const response = await fetch(`${API_BASE_URL}tasks/${boardId}`);
+      const tasks = await response.json();
+      console.log(tasks);
+
+      function createTaskElement(task) {
+        let src;
+        switch (task.status) {
+          case "completed":
+            src = `resources/Done_round.svg`;
+            break;
+          case "in-progress":
+            src = `resources/Time_atack_duotone.svg`;
+            break;
+          case "wont-do":
+            src = `resources/close_ring_duotone.svg`;
+            break;
+          default:
+            break;
+        }
+
+        let html;
+        if (task.status) {
+          html = `<div class="task ${task.status}" data-id="${task.id}">
+          <p class="task-icon">${task.emoji}</p>
+          <h2>${task.taskName}</h2>
+          <img src=${src} alt="${task.status}" />
+        </div>`;
+        } else {
+          html = `<div class="task todo" data-id="${task.id}">
+          <p class="task-icon">${task.emoji}</p>
+          <div class="">
+            <h2>${task.name}</h2>
+            <p class="task-desc">
+              ${task.description}
+            </p>
+          </div>
+        </div>`;
+        }
+        return html;
+      }
+
+      tasks.forEach((task) => {
+        const taskElement = createTaskElement(task);
+        document
+          .querySelector(".todo-container")
+          .insertAdjacentHTML("beforeend", taskElement);
+      });
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+      alert("❌ Failed to fetch tasks. Please try again.");
+    }
+  }
+
+  fetchTasks();
+
+  const getBoardIdFromURL = () => {
+    const urlParts = window.location.pathname.split("/");
+    return urlParts[urlParts.length - 1]; // Last part of the URL
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    const taskName = document.getElementById("task-name").value;
-    const description = document.getElementById("desc").value;
-    const emoji = document.querySelector('input[name="emoji"]:checked')?.value;
-    const status = document.querySelector(
-      'input[name="status"]:checked'
-    )?.value;
+    // Get form inputs
+    const userId = getBoardIdFromURL();
+    const taskNameInput = document.getElementById("task-name");
+    const descInput = document.getElementById("desc");
+    const emojiInput = document.querySelector('input[name="emoji"]:checked');
+    const statusInput = document.querySelector('input[name="status"]:checked');
+    const submitButton = document.querySelector(".add-button");
 
+    // Get values
+    const taskName = taskNameInput.value.trim();
+    const description = descInput.value.trim();
+    const emoji = emojiInput?.value;
+    const status = statusInput?.value || "todo";
+
+    // Validation
     if (!taskName || !description || !emoji) {
-      alert("❌ Please fill out all fields.");
+      showErrorMessage("❌ Please fill out all fields.");
       return;
     }
 
-    const response = await fetch(`${API_BASE_URL}tasks`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ taskName, description, emoji, status }),
-    });
+    submitButton.disabled = true;
+    submitButton.textContent = "Adding...";
 
-    if (response.ok) {
-      alert("✅ Task added successfully!");
-      fetchTasks();
+    const newTask = { taskName, description, emoji, status };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}board/${userId}/task`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newTask),
+      });
+
+      if (!response.ok) throw new Error("Failed to add task.");
+
+      taskNameInput.value = "";
+      descInput.value = "";
+      if (emojiInput) emojiInput.checked = false;
+      if (statusInput) statusInput.checked = false;
+
+      showSuccessMessage("✅ Task added successfully!");
       closeModal(e, false);
-    } else {
-      alert("❌ Error adding task.");
+      fetchTasks();
+    } catch (error) {
+      showErrorMessage("❌ Error adding task. Try again.");
+      console.error(error);
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = "Add New Task";
     }
+  };
+
+  const showErrorMessage = (message) => {
+    const errorDiv = document.getElementById("error-message");
+    errorDiv.textContent = message;
+    errorDiv.style.display = "block";
+    setTimeout(() => (errorDiv.style.display = "none"), 3000);
+  };
+
+  const showSuccessMessage = (message) => {
+    const successDiv = document.getElementById("success-message");
+    successDiv.textContent = message;
+    successDiv.classList.remove("hide");
+    setTimeout(() => (successDiv.style.display = "none"), 3000);
   };
 
   form.addEventListener("submit", handleFormSubmit);
@@ -178,31 +223,33 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   todoContainer.addEventListener("click", (e) => {
     const taskDiv = e.target.closest(".task");
+    const userId = getBoardIdFromURL();
 
     if (!taskDiv) return;
     if (!taskDiv || taskDiv.classList.contains("static-task")) return;
 
     const taskId = taskDiv.dataset.id;
 
-    openEditModal(taskId);
+    openEditModal(userId, taskId);
   });
 
-  const openEditModal = async (id) => {
+  const openEditModal = async (userId, taskId) => {
     isEditing = true;
+    console.log(isEditing);
     try {
-      const response = await fetch(`${API_BASE_URL}tasks/${id}`);
+      const response = await fetch(`${API_BASE_URL}tasks/${userId}/${taskId}`);
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status} - Task not found`);
       }
 
       const todo = await response.json();
-      // console.log(todo);
+      console.log(todo);
 
-      modalWrapper.dataset.taskId = id;
+      modalWrapper.dataset.taskId = taskId;
 
       modalWrapper.querySelector("h2").textContent = "Task Detail";
-      document.getElementById("task-name").value = todo.name || "";
+      document.getElementById("task-name").value = todo.taskName || "";
       document.getElementById("desc").value = todo.description || "";
 
       const emojiInput = document.querySelector(
