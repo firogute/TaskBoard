@@ -9,9 +9,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const todoContainer = document.querySelector(".todo-container");
   const editTaskBtn = document.querySelector(".edit-button");
   const deleteTaskBtn = document.querySelector(".delete-button");
-  console.log("HIIIIIIIIIIIIIIIIIIII");
+  // console.log("HIIIIIIIIIIIIIIIIIIII");
 
   let isEditing = false;
+  let isRetrieved = false;
   const API_BASE_URL = "http://localhost:8080/api/";
 
   function clearForm() {
@@ -32,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function openModal() {
-    console.log("Opening");
+    // console.log("Opening");
     modal.classList.remove("hide");
     if (isEditing) {
       document.querySelector(".add-button").classList.add("hide");
@@ -69,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const boardId = window.location.pathname.split("/")[1]; // Extract board ID from URL
       const response = await fetch(`${API_BASE_URL}tasks/${boardId}`);
       const tasks = await response.json();
-      console.log(tasks);
+      // console.log(tasks);
 
       function createTaskElement(task) {
         let src;
@@ -89,20 +90,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         let html;
         if (task.status) {
-          html = `<div class="task ${task.status}" data-id="${task.id}">
-          <p class="task-icon">${task.emoji}</p>
-          <h2>${task.taskName}</h2>
-          <img src=${src} alt="${task.status}" />
-        </div>`;
+          html = `<div class="task tasks ${task.status}" data-id="${task.id}">
+                  <p class="task-icon">${task.emoji}</p>
+                  ${
+                    task.status !== "todo"
+                      ? `<h2>${task.taskName}</h2>
+                         <img src="${src}" alt="${task.status}" />`
+                      : `<div class="">
+                           <h2>${task.taskName}</h2>
+                           <p class="task-desc">${task.description}</p>
+                         </div>`
+                  }
+                </div>`;
         } else {
-          html = `<div class="task todo" data-id="${task.id}">
+          html = `<div class="task tasks todo" data-id="${task.id}">
           <p class="task-icon">${task.emoji}</p>
-          <div class="">
-            <h2>${task.name}</h2>
-            <p class="task-desc">
-              ${task.description}
-            </p>
-          </div>
+          
         </div>`;
         }
         return html;
@@ -114,7 +117,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           .querySelector(".todo-container")
           .insertAdjacentHTML("beforeend", taskElement);
       });
-      showSuccessMessage("Tasks retrieved successfully!");
+
+      if (!isRetrieved) {
+        showSuccessMessage("Tasks retrieved successfully!");
+      }
     } catch (error) {
       // console.error("Error fetching tasks:", error);
       showErrorMessage("Failed to fetch tasks. Please refresh again.");
@@ -236,7 +242,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   todoContainer.addEventListener("click", (e) => {
-    const taskDiv = e.target.closest(".task");
+    const taskDiv = e.target.closest(".tasks");
     const userId = getBoardIdFromURL();
 
     if (!taskDiv) return;
@@ -249,7 +255,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const openEditModal = async (userId, taskId) => {
     isEditing = true;
-    console.log(isEditing);
+    // console.log(isEditing);
     try {
       const response = await fetch(`${API_BASE_URL}tasks/${userId}/${taskId}`);
 
@@ -258,7 +264,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       const todo = await response.json();
-      console.log(todo);
+      // console.log(todo);
 
       modalWrapper.dataset.taskId = taskId;
 

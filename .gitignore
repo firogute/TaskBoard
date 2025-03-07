@@ -41,3 +41,6 @@ build/
 
 servers/database.js
 servers/supabaseClient.js
+
+
+.env

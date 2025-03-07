@@ -5,10 +5,11 @@ import pkg from "pg";
 const { Pool } = pkg;
 import cors from "cors";
 import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
+dotenv.config();
 
-const SUPABASE_URL = "https://dzpildyiegjzbuyuysyn.supabase.co";
-const SUPABASE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6cGlsZHlpZWdqemJ1eXV5c3luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExOTM5NjUsImV4cCI6MjA1Njc2OTk2NX0.8UhvDniPMmOxeTU5XCs8c6AHzAIvu3F8XKQ4aGNdJXI";
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -255,7 +256,7 @@ app.delete("/api/tasks/:taskId", async (req, res) => {
   }
 });
 
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
