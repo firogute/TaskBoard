@@ -460,3 +460,10 @@ textarea:focus {
 .hide {
   display: none;
 }
+
+.error-message,
+.success-message {
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+}

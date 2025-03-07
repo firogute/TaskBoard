@@ -96,6 +96,28 @@ app.get("/:id", async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 });
+app.get("/api/tasks/:boardId", async (req, res) => {
+  const { boardId } = req.params;
+
+  try {
+    // Fetch the tasks from the "data" column of the given board
+    const { data, error } = await supabase
+      .from("boards")
+      .select("data")
+      .eq("id", boardId)
+      .single();
+
+    if (error || !data) {
+      return res.status(404).json({ error: "Board not found" });
+    }
+
+    // Send the tasks as JSON response
+    res.status(200).json(data.data || []);
+  } catch (err) {
+    console.error("Error fetching tasks:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 // Add a new task to a board
 app.post("/api/board/:id/task", async (req, res) => {

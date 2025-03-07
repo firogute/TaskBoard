@@ -63,6 +63,64 @@ document.addEventListener("DOMContentLoaded", async () => {
   modal.addEventListener("click", (e) => closeModal(e, true));
   closeBtn.addEventListener("click", closeModal);
 
+  async function fetchTasks() {
+    try {
+      const boardId = window.location.pathname.split("/")[1]; // Extract board ID from URL
+      const response = await fetch(`${API_BASE_URL}tasks/${boardId}`);
+      const tasks = await response.json();
+      console.log(tasks);
+
+      function createTaskElement(task) {
+        let src;
+        switch (task.status) {
+          case "completed":
+            src = `resources/Done_round.svg`;
+            break;
+          case "in-progress":
+            src = `resources/Time_atack_duotone.svg`;
+            break;
+          case "wont-do":
+            src = `resources/close_ring_duotone.svg`;
+            break;
+          default:
+            break;
+        }
+
+        let html;
+        if (task.status) {
+          html = `<div class="task ${task.status}" data-id="${task.id}">
+          <p class="task-icon">${task.emoji}</p>
+          <h2>${task.taskName}</h2>
+          <img src=${src} alt="${task.status}" />
+        </div>`;
+        } else {
+          html = `<div class="task todo" data-id="${task.id}">
+          <p class="task-icon">${task.emoji}</p>
+          <div class="">
+            <h2>${task.name}</h2>
+            <p class="task-desc">
+              ${task.description}
+            </p>
+          </div>
+        </div>`;
+        }
+        return html;
+      }
+
+      tasks.forEach((task) => {
+        const taskElement = createTaskElement(task);
+        document
+          .querySelector(".todo-container")
+          .insertAdjacentHTML("beforeend", taskElement);
+      });
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+      alert("❌ Failed to fetch tasks. Please try again.");
+    }
+  }
+
+  fetchTasks();
+
   const getBoardIdFromURL = () => {
     const urlParts = window.location.pathname.split("/");
     return urlParts[urlParts.length - 1]; // Last part of the URL
@@ -138,7 +196,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const showSuccessMessage = (message) => {
     const successDiv = document.getElementById("success-message");
     successDiv.textContent = message;
-    successDiv.style.display = "block";
+    successDiv.classList.remove("hide");
     setTimeout(() => (successDiv.style.display = "none"), 3000);
   };
 
