@@ -28,7 +28,7 @@ app.use(express.json());
 let boardId;
 
 app.get("/", async (req, res) => {
-  console.log("Creating a new board...");
+  // console.log("Creating a new board...");
 
   try {
     const { data, error } = await supabase
@@ -37,22 +37,22 @@ app.get("/", async (req, res) => {
       .select();
 
     if (error) {
-      console.error("Error inserting new board:", error);
+      // console.error("Error inserting new board:", error);
       throw error;
     }
 
     boardId = data[0].id;
-    console.log(`New board created with ID: ${boardId}`);
+    // console.log(`New board created with ID: ${boardId}`);
 
     return res.redirect(`/${boardId}`);
   } catch (err) {
-    console.error("Error creating a new board:", err);
+    // console.error("Error creating a new board:", err);
     return res.status(500).json({ error: err.message });
   }
 });
 
 app.get("/:id", async (req, res) => {
-  console.log(`Entered board route with ID: ${req.params.id}`);
+  // console.log(`Entered board route with ID: ${req.params.id}`);
 
   boardId = req.params.id;
 
@@ -64,14 +64,14 @@ app.get("/:id", async (req, res) => {
       .single();
 
     if (error || !data) {
-      console.error("Board not found:", error);
+      // console.error("Board not found:", error);
       return res.status(404).send("Board not found");
     }
 
-    console.log(`Board ID ${boardId} found, serving index.html`);
+    // console.log(`Board ID ${boardId} found, serving index.html`);
     res.sendFile(path.join(__dirname, "../public", "index.html"));
   } catch (err) {
-    console.error("Error retrieving board:", err);
+    // console.error("Error retrieving board:", err);
     return res.status(500).json({ error: err.message });
   }
 });
@@ -92,7 +92,7 @@ app.get("/api/tasks/:boardId", async (req, res) => {
     // Send the tasks as JSON response
     res.status(200).json(data.data || []);
   } catch (err) {
-    console.error("Error fetching tasks:", err);
+    // console.error("Error fetching tasks:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -138,7 +138,7 @@ app.post("/api/board/:id/task", async (req, res) => {
 
     res.status(200).json({ message: "Task added successfully", task: newTask });
   } catch (err) {
-    console.error("Error adding task:", err);
+    // console.error("Error adding task:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -166,7 +166,7 @@ app.get("/api/tasks/:userId/:taskId", async (req, res) => {
 
     res.json(onetask);
   } catch (error) {
-    console.error("Error fetching task:", error);
+    // console.error("Error fetching task:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -217,7 +217,7 @@ app.put("/api/tasks/:taskId", async (req, res) => {
       .status(200)
       .json({ message: "Task updated successfully", task: tasks[taskIndex] });
   } catch (err) {
-    console.error("Error updating task:", err);
+    // console.error("Error updating task:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -252,7 +252,7 @@ app.delete("/api/tasks/:taskId", async (req, res) => {
 
     res.status(200).json({ message: "Task deleted successfully" });
   } catch (err) {
-    console.error("Error deleting task:", err);
+    // console.error("Error deleting task:", err);
     res.status(500).json({ error: err.message });
   }
 });
